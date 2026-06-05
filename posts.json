@@ -1,0 +1,50 @@
+[
+  {
+    "id": "sql-injection-basics",
+    "title": "SQL 注入从入门到实战：一次完整的漏洞挖掘记录",
+    "date": "2026-06-05",
+    "excerpt": "记录我第一次在靶场中成功利用 SQL 注入漏洞的全过程，从发现注入点到用 sqlmap 自动化利用，再到手工注入的技巧总结。",
+    "tags": ["Web安全", "SQL注入", "渗透测试"],
+    "content": "<h2>前言</h2><p>SQL 注入（SQL Injection）是最经典、最常见的 Web 安全漏洞之一。尽管已经存在了二十多年，它在 OWASP Top 10 中依然占据重要位置。本文记录我在 DVWA 靶场中练习 SQL 注入的全过程。</p><h2>环境搭建</h2><p>使用的环境：</p><ul><li>靶场：DVWA (Damn Vulnerable Web Application)</li><li>工具：Burp Suite、sqlmap</li><li>浏览器：Firefox + FoxyProxy</li></ul><h2>发现注入点</h2><p>首先在 DVWA 的 SQL Injection 页面，输入单引号 <code>'</code> 测试，返回了 MySQL 语法错误，确认存在注入点。</p><pre><code># 测试 payload\n' OR '1'='1\n' OR '1'='1' -- \n' UNION SELECT 1,2 -- </code></pre><h2>手工注入过程</h2><p>1. 判断列数：使用 <code>ORDER BY</code> 子句逐列测试</p><p>2. 确定回显位置：使用 <code>UNION SELECT</code></p><p>3. 获取数据库名：<code>UNION SELECT database(),2</code></p><p>4. 获取表名：查询 <code>information_schema.tables</code></p><h2>sqlmap 自动化</h2><p>sqlmap 可以大幅提高效率：</p><pre><code>sqlmap -u \"http://target/vulnerabilities/sqli/?id=1\" --cookie=\"PHPSESSID=xxx\" --dbs</code></pre><h2>总结</h2><p>SQL 注入的核心在于：用户输入被拼接到 SQL 查询中而未经过滤。防御措施包括参数化查询、输入验证、最小权限原则等。</p>"
+  },
+  {
+    "id": "xss-cross-site-scripting",
+    "title": "XSS 跨站脚本攻击实战：反射型、存储型与 DOM 型",
+    "date": "2026-05-28",
+    "excerpt": "详解三种 XSS 攻击类型（反射型、存储型、DOM 型）的原理与利用方法，包含 XSS 平台搭建和 cookie 窃取实操。",
+    "tags": ["Web安全", "XSS", "渗透测试"],
+    "content": "<h2>XSS 概述</h2><p>跨站脚本攻击（Cross-Site Scripting，XSS）允许攻击者将恶意脚本注入到其他用户浏览的网页中。主要分为三种类型：反射型、存储型和 DOM 型。</p><h2>反射型 XSS</h2><p>恶意脚本通过 URL 参数传入，服务端将其直接反射到响应页面中。</p><pre><code>&lt;script&gt;alert('XSS')&lt;/script&gt;</code></pre><h2>存储型 XSS</h2><p>恶意脚本被存储到服务器（如数据库、留言板），其他用户访问时触发。危害更大，可形成 XSS 蠕虫。</p><h2>DOM 型 XSS</h2><p>通过修改页面的 DOM 节点来触发，不经过服务端处理，完全在客户端发生。</p><h2>XSS 平台</h2><p>可以使用 Beef 或自建 XSS 平台来接收被盗取的 cookie 和其他信息。</p><h2>防御措施</h2><ul><li>输出编码（HTML Entity Encoding）</li><li>Content-Security-Policy (CSP)</li><li>HttpOnly Cookie</li><li>输入验证与过滤</li></ul>"
+  },
+  {
+    "id": "nmap-scanning-guide",
+    "title": "Nmap 端口扫描完全指南：从基础到高级用法",
+    "date": "2026-05-20",
+    "excerpt": "系统学习 Nmap 的各种扫描技术，包括 TCP SYN 扫描、服务版本探测、NSE 脚本引擎的使用，以及实战中的扫描策略。",
+    "tags": ["渗透测试", "信息收集", "工具使用"],
+    "content": "<h2>Nmap 简介</h2><p>Nmap (Network Mapper) 是网络安全领域最基础也最重要的工具之一，用于主机发现、端口扫描、服务版本探测和操作系统检测。</p><h2>基本扫描命令</h2><pre><code># Ping 扫描 - 发现存活主机\nnmap -sn 192.168.1.0/24\n\n# TCP SYN 半连接扫描（默认，需要 root 权限）\nnmap -sS 192.168.1.1\n\n# TCP 全连接扫描\nnmap -sT 192.168.1.1\n\n# UDP 扫描\nnmap -sU 192.168.1.1</code></pre><h2>版本和系统探测</h2><pre><code># 服务版本探测\nnmap -sV 192.168.1.1\n\n# 操作系统检测\nnmap -O 192.168.1.1\n\n# 综合扫描\nnmap -A 192.168.1.1</code></pre><h2>NSE 脚本引擎</h2><p>Nmap Scripting Engine 提供了数百个脚本用于漏洞检测、暴力破解等：</p><pre><code># 使用默认安全脚本\nnmap --script=default 192.168.1.1\n\n# 漏洞扫描脚本\nnmap --script=vuln 192.168.1.1</code></pre><h2>防火墙/IDS 绕过技巧</h2><ul><li>分片扫描：<code>-f</code></li><li>使用诱饵：<code>-D</code></li><li>修改源端口：<code>--source-port 53</code></li><li>随机扫描顺序：<code>--randomize-hosts</code></li></ul>"
+  },
+  {
+    "id": "burp-suite-tutorial",
+    "title": "Burp Suite 渗透测试实战：从代理设置到自动化扫描",
+    "date": "2026-05-15",
+    "excerpt": "Burp Suite 是 Web 渗透测试的瑞士军刀。本文从零开始讲解代理配置、Repeater、Intruder、Scanner 等核心模块的使用方法。",
+    "tags": ["渗透测试", "工具使用", "Web安全"],
+    "content": "<h2>Burp Suite 简介</h2><p>Burp Suite 是 PortSwigger 公司开发的 Web 应用安全测试集成平台，是 Web 渗透测试中最核心的工具之一。</p><h2>代理设置</h2><p>1. 浏览器设置代理为 127.0.0.1:8080</p><p>2. 安装 Burp 的 CA 证书以拦截 HTTPS 流量</p><p>3. 在 Proxy → Intercept 中查看拦截的请求</p><h2>核心模块</h2><h3>Repeater（重放器）</h3><p>手动修改并重放单个 HTTP 请求，适合精细化的漏洞验证。</p><h3>Intruder（入侵者）</h3><p>自动化地对参数进行枚举、爆破，支持多种 payload 类型。</p><h3>Scanner（扫描器）</h3><p>自动扫描 Web 应用漏洞（专业版功能）。</p><h3>Decoder（解码器）</h3><p>URL 编码、Base64、HTML 实体等各种编解码。</p><h2>实战技巧</h2><ul><li>使用 Scope 限定目标范围，避免扫描无关站点</li><li>善用 BApp Store 安装扩展插件</li><li>配合 sqlmap 使用：Burp 抓包 → 复制为 curl 命令 → sqlmap 加载</li></ul>"
+  },
+  {
+    "id": "file-upload-vuln",
+    "title": "文件上传漏洞深度剖析：绕过技巧与防御方案",
+    "date": "2026-05-08",
+    "excerpt": "文件上传是 Web 应用中最危险的漏洞之一。本文总结了常见的上传绕过技术：前端验证绕过、MIME 类型伪造、后缀名绕过、.htaccess 利用等。",
+    "tags": ["Web安全", "漏洞分析", "渗透测试"],
+    "content": "<h2>文件上传漏洞概述</h2><p>当 Web 应用对用户上传的文件未做充分验证时，攻击者可能上传 WebShell 等恶意文件，进而获取服务器控制权。</p><h2>常见绕过技术</h2><h3>1. 前端 JS 验证绕过</h3><p>删除或修改 JavaScript 验证逻辑，或使用 Burp Suite 直接修改请求。</p><h3>2. MIME 类型绕过</h3><p>修改 Content-Type 为允许的类型，如 <code>image/jpeg</code>。</p><h3>3. 后缀名绕过</h3><p>利用黑名单不完整的绕过方式：</p><ul><li>大小写：<code>.Php</code></li><li>双后缀：<code>.php.jpg</code></li><li>空格/点：<code>.php .</code></li><li>::$DATA（Windows）：<code>.php::$DATA</code></li><li>Apache 解析：<code>.php.xxx</code></li></ul><h3>4. .htaccess 攻击</h3><p>上传 <code>.htaccess</code> 文件设置任意后缀被解析为 PHP。</p><h3>5. 图片马</h3><p>将 PHP 代码嵌入图片 EXIF 或末尾，配合文件包含漏洞执行。</p><h2>防御方案</h2><ul><li>白名单验证文件类型</li><li>文件重命名（UUID）</li><li>存储与 Web 服务分离</li><li>限制上传目录的执行权限</li><li>文件内容检测（Magic Number）</li></ul>"
+  },
+  {
+    "id": "ctf-web-first-time",
+    "title": "CTF 初体验：从零到解出第一道 Web 题",
+    "date": "2026-04-30",
+    "excerpt": "记录我第一次参加 CTF 比赛的经历，从环境搭建到解出一道简单的 Web 题目，分享新手入门的心得和资源推荐。",
+    "tags": ["CTF", "Web安全", "入门"],
+    "content": "<h2>什么是 CTF</h2><p>CTF (Capture The Flag) 是网络安全领域的竞技比赛，参赛者需要在限定时间内解决各种安全挑战，获取 flag 得分。</p><h2>CTF 主要方向</h2><ul><li><strong>Web</strong>：Web 应用漏洞利用</li><li><strong>Pwn</strong>：二进制漏洞利用</li><li><strong>Reverse</strong>：逆向工程</li><li><strong>Crypto</strong>：密码学</li><li><strong>Misc</strong>：安全杂项</li></ul><h2>新手练习平台推荐</h2><ul><li>BUUCTF — 国内最大的 CTF 在线平台</li><li>CTFHub — 技能树式学习</li><li>攻防世界 (adworld) — 新手到高手</li><li>PortSwigger Web Security Academy</li></ul><h2>我的第一道 Web 题</h2><p>题目：一道简单的 PHP 代码审计题，关键代码：</p><pre><code>&lt;?php\nif(isset($_GET['a']) && isset($_GET['b'])){\n  if($_GET['a'] != $_GET['b'] && md5($_GET['a']) == md5($_GET['b'])){\n    echo $flag;\n  }\n}\n?&gt;</code></pre><p>利用 PHP 弱类型比较的特性，使用两个不同但 MD5 后以 0e 开头的字符串即可绕过。</p><h2>心得体会</h2><p>CTF 是学习网络安全的绝佳方式，它能让你在实践中快速掌握各种漏洞的原理和利用方法。对于新手，建议从 Web 方向入手，见效快，正反馈强。</p>"
+  }
+]
